@@ -3,6 +3,8 @@ import {API_URL} from "../config";
 import {Link} from "react-router-dom";
 import DataGrid from "react-data-grid";
 import 'react-data-grid/lib/styles.css';
+import * as docx from "docx";
+import {saveAs} from "file-saver";
 
 export default function Lists() {
     const [data, setData] = useState([])
@@ -46,6 +48,49 @@ export default function Lists() {
         return r.numeroOpportunite.includes(filter) || r.referenceDossier.includes(filter) || r.numeroSiretSiren.includes(filter) || r.affaire.includes(filter) || r.nomClient.includes(filter) || r.intermediaire.includes(filter) || r.description.includes(filter)
     })
 
+    // const exportExcel = (filteredRow) => {
+    //     const ws = XLSX.utils.json_to_sheet(filteredRow);
+    //     const wb = XLSX.utils.book_new();
+    //     XLSX.utils.book_append_sheet(wb, ws, 'Sheet1');
+    //     XLSX.writeFile(wb, 'opportunite.xlsx');
+    // };
+
+    /*const exportWord = (filteredRow) => {
+        const doc = new docx.Document(undefined);
+        doc.addSection({
+            properties: {},
+            children: [
+                new docx.Paragraph({
+                    children: [
+                        new docx.TextRun('Numero Opportunité'),
+                        new docx.TextRun('Reference Dossier'),
+                        new docx.TextRun('Numero Siret Siren'),
+                        new docx.TextRun('Affaire'),
+                        new docx.TextRun('Nom Client'),
+                        new docx.TextRun('Intermediaire'),
+                        new docx.TextRun('Description'),
+                    ],
+                }),
+                ...filteredRow.map((r) => {
+                    return new docx.Paragraph({
+                        children: [
+                            new docx.TextRun(r.numeroOpportunite),
+                            new docx.TextRun(r.referenceDossier),
+                            new docx.TextRun(r.numeroSiretSiren),
+                            new docx.TextRun(r.affaire),
+                            new docx.TextRun(r.nomClient),
+                            new docx.TextRun(r.intermediaire),
+                            new docx.TextRun(r.description),
+                        ],
+                    });
+                }),
+            ],
+        });
+        docx.Packer.toBlob(doc).then((blob) => {
+            saveAs(blob, 'opportunite.docx');
+        });
+    };*/
+
 
     return (<div>
         <h1>
@@ -86,8 +131,26 @@ export default function Lists() {
                               color: "white",
                           }}
                 />
-                <div>
-                    Exporter en PDF
+                <div
+                    style={{
+                        display: "flex", justifyContent: "end", alignItems: "center", marginTop: "20px", gap: "10px"
+                    }}
+                >
+                    {/*<button type="submit" className={"button-next cta-button__btn--action"}*/}
+                    {/*        onClick={exportExcel}*/}
+                    {/*>*/}
+                    {/*    export excel*/}
+                    {/*</button>*/}
+                    {/*<button type="submit" className={"button-next cta-button__btn--action"}*/}
+                    {/*        onClick={exportWord}*/}
+                    {/*>*/}
+                    {/*    export word*/}
+                    {/*</button>*/}
+                    {/*<button type="submit" className={"button-next cta-button__btn--action"}*/}
+                    {/*        onClick={exportPdf}*/}
+                    {/*>*/}
+                    {/*    export excel*/}
+                    {/*</button>*/}
                 </div>
             </div>
         </h1>
