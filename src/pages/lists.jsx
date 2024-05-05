@@ -26,13 +26,13 @@ export default function Lists() {
 
     const row = data.map((d) => {
         return {
-            numeroOpportunite: d.informationsGenerales.numeroOpportunite,
-            referenceDossier: d.informationsGenerales.referenceDossier,
-            numeroSiretSiren: d.informationsGenerales.numeroSiretSiren,
-            affaire: d.informationsGenerales.affaire,
-            nomClient: d.informationsGenerales.nomClient,
-            intermediaire: d.informationsGenerales.intermediaire,
-            description: d.informationsGenerales.description,
+            numeroOpportunite: d.numeroOpportunite,
+            referenceDossier: d.referenceDossier,
+            numeroSiretSiren: d.numeroSiretSiren,
+            affaire: d.affaire,
+            nomClient: d.nomClient,
+            intermediaire: d.intermediaire,
+            description: d.description,
         }
     })
 

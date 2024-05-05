@@ -30,38 +30,37 @@ const Create = () => {
     });
 
     const handlePosts = async () => {
-        const newFormData = new FormData();
-        newFormData.append('numeroOpportunite', formData.opportunityNumber);
-        newFormData.append('referenceDossier', formData.refDossier);
-        newFormData.append('numeroSiretSiren', formData.siretSiren);
-        newFormData.append('affaire', formData.affaire);
-        newFormData.append('nomClient', formData.clientName);
-        newFormData.append('intermediaire', formData.intermediary);
-        newFormData.append('description', formData.briefDescription);
-        newFormData.append('images', formData.descriptionImage);
-        newFormData.append('presenceCoassurance', formData.hasCoInsurance);
-        newFormData.append('adresseOperation', formData.operationAddress);
-        newFormData.append('planAdresseOperation', formData.operationPlan);
-        newFormData.append('descriptifDetailleOperation', formData.detailedDescription);
-        newFormData.append('coutOperation', {
-            montant1: formData.operationCost.amount1,
-            montant2: formData.operationCost.amount2,
-            montant3: formData.operationCost.totalAmount,
-        });
+        const newformData = new FormData();
+        newformData.append('numeroOpportunite', formData.opportunityNumber);
+        newformData.append('referenceDossier', formData.refDossier);
+        newformData.append('numeroSiretSiren', formData.siretSiren);
+        newformData.append('affaire', formData.affaire);
+        newformData.append('nomClient', formData.clientName);
+        newformData.append('intermediaire', formData.intermediary);
+        newformData.append('description', formData.briefDescription);
+        newformData.append('images', formData.descriptionImage);
+        newformData.append('presenceCoassurance', formData.hasCoInsurance);
+        newformData.append('adresseOperation', formData.operationAddress);
+        newformData.append('planAdresseOperation', formData.operationPlan);
+        newformData.append('descriptifDetailleOperation', formData.detailedDescription);
+        newformData.append('coutOperation[montant1]', formData.operationCost.amount1);
+        newformData.append('coutOperation[montant2]', formData.operationCost.amount2);
+        newformData.append('coutOperation[totalAmount]', formData.operationCost.totalAmount);
 
-        const response = await fetch(API_URL + '/opportunity', {
-            method: 'POST',
+        try {
+            const response = await fetch(`${API_URL}/opportunity`, {
+                method: 'POST',
+                body: newformData,
+            });
 
-            headers: {
-                'Content-Type': 'multipart/form-data',
-            },
-            body: newFormData,
-        });
+            if (!response.ok) {
+                throw new Error('Erreur lors de la soumission des données.');
+            }
 
-        if (response.ok) {
-            console.log('Opportunité créée avec succès');
-        } else {
-            console.error('Erreur lors de la création de l\'opportunité');
+            const data = await response.json();
+            console.log('Réponse de l\'API:', data);
+        } catch (error) {
+            console.error('Erreur:', error.message);
         }
     }
 
@@ -230,7 +229,7 @@ const Create = () => {
                 >
                     <button type="button" className={"button-return"} onClick={handleBack}>Retour
                     </button>
-                    <button type="submit" className={"button-next cta-button__btn--action"}>Soumettre</button>
+                    <button type="button" onClick={handlePosts} className={"button-next cta-button__btn--action"}>Soumettre</button>
                 </div>
             </form>)}
 
