@@ -7,6 +7,7 @@ import WysiwygEditorComponent from "../components/WysiwygEditorComponent";
 import ExcelTableComponent from "../components/ExcelTableComponent";
 import "./styles.css"
 import {API_URL} from "../config";
+import {Document, Page, Text, View, StyleSheet, PDFDownloadLink} from '@react-pdf/renderer';
 
 
 const Create = () => {
@@ -47,11 +48,14 @@ const Create = () => {
         newformData.append('coutOperation[montant2]', formData.operationCost.amount2);
         newformData.append('coutOperation[totalAmount]', formData.operationCost.totalAmount);
 
+
+
         try {
             const response = await fetch(`${API_URL}/opportunity`, {
                 method: 'POST',
                 body: newformData,
             });
+
 
             if (!response.ok) {
                 throw new Error('Erreur lors de la soumission des données.');
@@ -63,6 +67,31 @@ const Create = () => {
             console.error('Erreur:', error.message);
         }
     }
+
+    const MyDocument = ({ formData }) => (
+        <Document>
+            <Page size="A4">
+                <View >
+                    <Text>Numéro Opportunité: {formData.opportunityNumber}</Text>
+                    <Text>Référence Dossier: {formData.refDossier}</Text>
+                    <Text>Numéro Siret/Siren: {formData.siretSiren}</Text>
+                    <Text>Affaire: {formData.affaire}</Text>
+                    <Text>Nom Client: {formData.clientName}</Text>
+                    <Text>Intermédiaire: {formData.intermediary}</Text>
+                    <Text>Description: {formData.briefDescription}</Text>
+                    <Text>Présence Coassurance: {formData.hasCoInsurance}</Text>
+                    <Text>Adresse Opération: {formData.operationAddress}</Text>
+                    <Text>
+                        Descriptif Opération:
+                        {formData.detailedDescription}
+                    </Text>
+                    <Text>Montant 1: {formData.operationCost.amount1}</Text>
+                    <Text>Montant 2: {formData.operationCost.amount2}</Text>
+                    <Text>Montant Total: {formData.operationCost.totalAmount}</Text>
+                </View>
+            </Page>
+        </Document>
+    );
 
 
     const handleNext = () => {
@@ -230,6 +259,15 @@ const Create = () => {
                     <button type="button" className={"button-return"} onClick={handleBack}>Retour
                     </button>
                     <button type="button" onClick={handlePosts} className={"button-next cta-button__btn--action"}>Soumettre</button>
+                    <button type="submit" className={"button-next cta-button__btn--action"}>
+                        <PDFDownloadLink document={<MyDocument formData={formData} />} fileName="opportunite.pdf"
+                            style={{
+                                textDecoration: "none", color: "white",
+                            }}
+                        >
+                            {({ blob, url, loading, error }) => (loading ? 'Téléchargement en cours...' : 'Télécharger PDF')}
+                        </PDFDownloadLink>
+                    </button>
                 </div>
             </form>)}
 
