@@ -6,6 +6,7 @@ import RadioBoxComponent from "../components/RadioBoxComponent";
 import WysiwygEditorComponent from "../components/WysiwygEditorComponent";
 import ExcelTableComponent from "../components/ExcelTableComponent";
 import "./styles.css"
+import {API_URL} from "../config";
 
 
 const Create = () => {
@@ -18,15 +19,52 @@ const Create = () => {
         clientName: '',
         intermediary: '',
         briefDescription: '',
-        descriptionImage: null,
+        descriptionImage: [],
         hasCoInsurance: 'Non',
         operationAddress: '',
-        operationPlan: null,
+        operationPlan: [],
         detailedDescription: '',
         operationCost: {
             amount1: 0, amount2: 0, totalAmount: 0,
         },
     });
+
+    const handlePosts = async () => {
+        const newFormData = new FormData();
+        newFormData.append('numeroOpportunite', formData.opportunityNumber);
+        newFormData.append('referenceDossier', formData.refDossier);
+        newFormData.append('numeroSiretSiren', formData.siretSiren);
+        newFormData.append('affaire', formData.affaire);
+        newFormData.append('nomClient', formData.clientName);
+        newFormData.append('intermediaire', formData.intermediary);
+        newFormData.append('description', formData.briefDescription);
+        newFormData.append('images', formData.descriptionImage);
+        newFormData.append('presenceCoassurance', formData.hasCoInsurance);
+        newFormData.append('adresseOperation', formData.operationAddress);
+        newFormData.append('planAdresseOperation', formData.operationPlan);
+        newFormData.append('descriptifDetailleOperation', formData.detailedDescription);
+        newFormData.append('coutOperation', {
+            montant1: formData.operationCost.amount1,
+            montant2: formData.operationCost.amount2,
+            montant3: formData.operationCost.totalAmount,
+        });
+
+        const response = await fetch(API_URL + '/opportunity', {
+            method: 'POST',
+
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+            body: newFormData,
+        });
+
+        if (response.ok) {
+            console.log('Opportunité créée avec succès');
+        } else {
+            console.error('Erreur lors de la création de l\'opportunité');
+        }
+    }
+
 
     const handleNext = () => {
         setActiveStep((prevStep) => prevStep + 1);
@@ -37,7 +75,6 @@ const Create = () => {
     };
 
     const handleStepSubmit = (e) => {
-        e.preventDefault();
         console.log('Données soumises:', formData);
         handleNext();
     };
@@ -49,9 +86,7 @@ const Create = () => {
         <h1
             className={"typo-title typo-color--axablue"}
             style={{
-                textAlign: "center",
-                margin: "20px 0",
-                fontSize: "3rem",
+                textAlign: "center", margin: "20px 0", fontSize: "3rem",
             }}
         >
             Créer une opportunité
@@ -60,29 +95,18 @@ const Create = () => {
         <h3
             className={"typo-subtitle typo-color--axablue"}
             style={{
-                textAlign: "center",
-                margin: "20px 0",
-                fontSize: "2rem",
+                textAlign: "center", margin: "20px 0", fontSize: "2rem",
             }}
         >
-            {
-                activeStep === 0 && "Informations générales"
-            }
-            {
-                activeStep === 1 && "Informations sur le client"
-            }
-            {
-                activeStep === 2 && "Informations sur l'opération"
-            }
-            {
-                activeStep === 3 && "Confirmation"
-            }
+            {activeStep === 0 && "Informations générales"}
+            {activeStep === 1 && "Informations sur le client"}
+            {activeStep === 2 && "Informations sur l'opération"}
+            {activeStep === 3 && "Confirmation"}
 
             <br/>
             <span
                 style={{
-                    fontSize: "1rem",
-                    color: "#000",
+                    fontSize: "1rem", color: "#000",
                 }}
             >
                 Étape {activeStep + 1} sur 3
@@ -91,8 +115,7 @@ const Create = () => {
 
         <div
             style={{
-                maxWidth: "600px",
-                margin: "0 auto",
+                maxWidth: "600px", margin: "0 auto",
             }}
         >
             {activeStep === 0 && (<form onSubmit={handleStepSubmit}>
@@ -155,6 +178,7 @@ const Create = () => {
                 <ImageComponent
                     label="Image en lien avec la description"
                     name="descriptionImage"
+                    onFilesSelected={(files) => setFormData({...formData, descriptionImage: files})}
                 />
                 <RadioBoxComponent
                     label="Présence d’une coassurance"
@@ -181,14 +205,24 @@ const Create = () => {
                 <ImageComponent
                     label="Plan de l'adresse de l'opération"
                     name="operationPlan"
+                    onFilesSelected={(files) => setFormData({...formData, operationPlan: files})}
+
                 />
                 <WysiwygEditorComponent
                     label="Descriptif détaillé de l'opération"
                     name="detailedDescription"
+                    onChange={(value) => setFormData({...formData, detailedDescription: value})}
                 />
                 <ExcelTableComponent
                     label="Coût de l'opération (tarif)"
                     name="operationCost"
+                    onAddRow={(row) => setFormData({
+                        ...formData, operationCost: {
+                            amount1: parseFloat(formData.operationCost.amount1) + parseFloat(row.montant1),
+                            amount2: parseFloat(formData.operationCost.amount2) + parseFloat(row.montant2),
+                            totalAmount: parseFloat(formData.operationCost.totalAmount) + parseFloat(row.montant1) + parseFloat(row.montant2),
+                        },
+                    })}
                 />
 
                 <div
