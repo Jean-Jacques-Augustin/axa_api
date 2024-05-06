@@ -7,7 +7,7 @@ import WysiwygEditorComponent from "../components/WysiwygEditorComponent";
 import ExcelTableComponent from "../components/ExcelTableComponent";
 import "./styles.css"
 import {API_URL} from "../config";
-import {Document, Page, Text, View, StyleSheet, PDFDownloadLink} from '@react-pdf/renderer';
+import {Document, Page, Text, View, PDFDownloadLink} from '@react-pdf/renderer';
 
 
 const Create = () => {
@@ -49,13 +49,10 @@ const Create = () => {
         newformData.append('coutOperation[totalAmount]', formData.operationCost.totalAmount);
 
 
-
         try {
             const response = await fetch(`${API_URL}/opportunity`, {
-                method: 'POST',
-                body: newformData,
+                method: 'POST', body: newformData,
             });
-
 
             if (!response.ok) {
                 throw new Error('Erreur lors de la soumission des données.');
@@ -68,30 +65,42 @@ const Create = () => {
         }
     }
 
-    const MyDocument = ({ formData }) => (
-        <Document>
+    const MyDocument = ({formData}) => {
+        const {
+            opportunityNumber,
+            refDossier,
+            siretSiren,
+            affaire,
+            clientName,
+            intermediary,
+            briefDescription,
+            hasCoInsurance,
+            operationAddress,
+            detailedDescription,
+            operationCost
+        } = formData;
+
+        return (<Document>
             <Page size="A4">
-                <View >
-                    <Text>Numéro Opportunité: {formData.opportunityNumber}</Text>
-                    <Text>Référence Dossier: {formData.refDossier}</Text>
-                    <Text>Numéro Siret/Siren: {formData.siretSiren}</Text>
-                    <Text>Affaire: {formData.affaire}</Text>
-                    <Text>Nom Client: {formData.clientName}</Text>
-                    <Text>Intermédiaire: {formData.intermediary}</Text>
-                    <Text>Description: {formData.briefDescription}</Text>
-                    <Text>Présence Coassurance: {formData.hasCoInsurance}</Text>
-                    <Text>Adresse Opération: {formData.operationAddress}</Text>
-                    <Text>
-                        Descriptif Opération:
-                        {formData.detailedDescription}
-                    </Text>
-                    <Text>Montant 1: {formData.operationCost.amount1}</Text>
-                    <Text>Montant 2: {formData.operationCost.amount2}</Text>
-                    <Text>Montant Total: {formData.operationCost.totalAmount}</Text>
+                <View style={{padding: 10}}>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Numéro Opportunité: {opportunityNumber}</Text>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Référence Dossier: {refDossier}</Text>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Numéro Siret/Siren: {siretSiren}</Text>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Affaire: {affaire}</Text>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Nom Client: {clientName}</Text>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Intermédiaire: {intermediary}</Text>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Description: {briefDescription}</Text>
+                    {hasCoInsurance && <Text style={{fontSize: 14, marginBottom: 5}}>Présence Coassurance: Oui</Text>}
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Adresse Opération: {operationAddress}</Text>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Descriptif Opération:</Text>
+                    <Text style={{fontSize: 12, marginBottom: 10}}>{detailedDescription}</Text>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Montant 1: {operationCost.amount1}</Text>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Montant 2: {operationCost.amount2}</Text>
+                    <Text style={{fontSize: 14, marginBottom: 5}}>Montant Total: {operationCost.totalAmount}</Text>
                 </View>
             </Page>
-        </Document>
-    );
+        </Document>);
+    }
 
 
     const handleNext = () => {
@@ -258,14 +267,18 @@ const Create = () => {
                 >
                     <button type="button" className={"button-return"} onClick={handleBack}>Retour
                     </button>
-                    <button type="button" onClick={handlePosts} className={"button-next cta-button__btn--action"}>Soumettre</button>
+                    <button type="button" onClick={handlePosts}
+                            className={"button-next cta-button__btn--action"}>Soumettre
+                    </button>
                     <button type="submit" className={"button-next cta-button__btn--action"}>
-                        <PDFDownloadLink document={<MyDocument formData={formData} />} fileName="opportunite.pdf"
-                            style={{
-                                textDecoration: "none", color: "white",
-                            }}
+                        <PDFDownloadLink document={<MyDocument formData={formData}/>} fileName="opportunite.pdf"
+                                         style={{
+                                             textDecoration: "none", color: "white",
+                                         }}
                         >
-                            {({ blob, url, loading, error }) => (loading ? 'Téléchargement en cours...' : 'Télécharger PDF')}
+                            {({
+                                  blob, url, loading, error
+                              }) => (loading ? 'Téléchargement en cours...' : 'Télécharger PDF')}
                         </PDFDownloadLink>
                     </button>
                 </div>

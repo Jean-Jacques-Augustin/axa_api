@@ -128,7 +128,7 @@ export default function Lists() {
                 <DataGrid columns={columns} rows={filteredRow}
                           className={"typo-title typo-color--axablue"}
                           style={{
-                              color: "white",
+                              color: "inherit",
                           }}
                 />
                 <div
@@ -136,21 +136,6 @@ export default function Lists() {
                         display: "flex", justifyContent: "end", alignItems: "center", marginTop: "20px", gap: "10px"
                     }}
                 >
-                    {/*<button type="submit" className={"button-next cta-button__btn--action"}*/}
-                    {/*        onClick={exportExcel}*/}
-                    {/*>*/}
-                    {/*    export excel*/}
-                    {/*</button>*/}
-                    {/*<button type="submit" className={"button-next cta-button__btn--action"}*/}
-                    {/*        onClick={exportWord}*/}
-                    {/*>*/}
-                    {/*    export word*/}
-                    {/*</button>*/}
-                    {/*<button type="submit" className={"button-next cta-button__btn--action"}*/}
-                    {/*        onClick={exportPdf}*/}
-                    {/*>*/}
-                    {/*    export excel*/}
-                    {/*</button>*/}
                 </div>
             </div>
         </h1>

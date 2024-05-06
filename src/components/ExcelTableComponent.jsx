@@ -1,21 +1,29 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 
 function ExcelSimulation({onAddRow}) {
     const [montant1, setMontant1] = useState(0);
     const [montant2, setMontant2] = useState(0);
+    const [montant3, setMontant3] = useState(0);
 
     const calculateTotal = (m1, m2) => {
         return parseFloat(m1) + parseFloat(m2);
-    }
+    };
 
-    const addRow = () => {
-        const newRow = {montant1, montant2};
-        onAddRow(newRow);
-        setMontant1(0);
-        setMontant2(0);
-    }
+    useEffect(() => {
+        const total = calculateTotal(montant1, montant2);
+        setMontant3(total);
+    }, [montant1, montant2]);
 
-    return (<>
+    const handleMontant1Change = (e) => {
+        setMontant1(parseFloat(e.target.value));
+    };
+
+    const handleMontant2Change = (e) => {
+        setMontant2(parseFloat(e.target.value));
+    };
+
+    return (
+        <>
             <h1>Simulation Excel</h1>
             <table>
                 <thead>
@@ -27,14 +35,14 @@ function ExcelSimulation({onAddRow}) {
                 </thead>
                 <tbody>
                 <tr>
-                    <td><input type="number" value={montant1} onChange={(e) => setMontant1(e.target.value)}/></td>
-                    <td><input type="number" value={montant2} onChange={(e) => setMontant2(e.target.value)}/></td>
-                    <td><h1>{calculateTotal(montant1, montant2)}</h1></td>
+                    <td><input type="number" value={montant1} onChange={handleMontant1Change}/></td>
+                    <td><input type="number" value={montant2} onChange={handleMontant2Change}/></td>
+                    <td><h1>{montant3}</h1></td>
                 </tr>
                 </tbody>
             </table>
-            <button onClick={addRow}>Ajouter une ligne</button>
-        </>);
+        </>
+    );
 }
 
 export default ExcelSimulation;
